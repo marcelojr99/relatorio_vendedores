@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Relatório Semanal — Colaceramica</title>
+<style>
+  :root {
+    --vermelho: #9B1C1C;
+    --vermelho-claro: #C53030;
+    --terracota: #C05621;
+    --creme: #FDF8F3;
+    --bege: #F0E8DC;
+    --bege-escuro: #DDD0C0;
+    --cinza: #6B6560;
+    --cinza-claro: #EDE8E3;
+    --texto: #2C2420;
+    --branco: #FFFFFF;
+    --verde: #276749;
+    --verde-claro: #EBF5EF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bege);
+    color: var(--texto);
+    font-size: 16px;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--vermelho);
+    color: var(--branco);
+    padding: 20px 20px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--terracota);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .header-titles h1 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+  }
+  .header-titles p {
+    font-size: 11px;
+    opacity: 0.75;
+    margin-top: 2px;
+  }
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.2);
+    border-radius: 99px;
+    height: 5px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--terracota);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 10px;
+    opacity: 0.7;
+    text-align: right;
+    margin-top: 3px;
+  }
+
+  /* ── STEPPER ── */
+  .steps-nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    padding: 12px 16px;
+    background: var(--creme);
+    border-bottom: 1px solid var(--bege-escuro);
+    scrollbar-width: none;
+  }
+  .steps-nav::-webkit-scrollbar { display: none; }
+  .step-btn {
+    flex-shrink: 0;
+    background: var(--cinza-claro);
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cinza);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .step-btn.active {
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+  .step-btn.done {
+    background: var(--verde);
+    color: var(--branco);
+  }
+
+  /* ── SEÇÕES ── */
+  .section { display: none; padding: 16px; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--vermelho);
+    border-left: 4px solid var(--terracota);
+    padding-left: 10px;
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  /* ── CAMPOS ── */
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--cinza);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    background: var(--branco);
+    border: 1.5px solid var(--bege-escuro);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 15px;
+    color: var(--texto);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--vermelho-claro);
+    box-shadow: 0 0 0 3px rgba(155,28,28,0.1);
+  }
+  .field textarea { resize: none; min-height: 80px; line-height: 1.5; }
+  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6560' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ── VISIT / CLIENT CARDS ── */
+  .visit-card {
+    background: var(--branco);
+    border: 1.5px solid var(--bege-escuro);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .visit-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .visit-num {
+    background: var(--vermelho);
+    color: var(--branco);
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .visit-card-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--cinza);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex: 1;
+    margin-left: 10px;
+  }
+  .btn-remove {
+    background: none;
+    border: none;
+    color: var(--cinza);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+  }
+
+  .btn-add {
+    width: 100%;
+    background: var(--creme);
+    border: 2px dashed var(--bege-escuro);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vermelho);
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.2s;
+  }
+  .btn-add:active { background: var(--bege); }
+
+  .subsection-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--texto);
+    margin: 4px 0 10px;
+  }
+  .subsection-tip {
+    font-size: 12px;
+    color: var(--cinza);
+    margin: -8px 0 12px;
+    line-height: 1.4;
+  }
+
+  /* ── CONTADOR NUMÉRICO ── */
+  .counter-row {
+    background: var(--branco);
+    border: 1.5px solid var(--bege-escuro);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .counter-label {
+    flex: 1;
+    font-size: 13px;
+    color: var(--texto);
+    line-height: 1.3;
+  }
+  .counter-controls {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+  }
+  .counter-btn {
+    width: 34px; height: 34px;
+    border: 1.5px solid var(--bege-escuro);
+    background: var(--creme);
+    color: var(--vermelho);
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .counter-btn:first-child { border-radius: 8px 0 0 8px; }
+  .counter-btn:last-child  { border-radius: 0 8px 8px 0; }
+  .counter-btn:active { background: var(--bege); }
+  .counter-val {
+    width: 38px; height: 34px;
+    border-top: 1.5px solid var(--bege-escuro);
+    border-bottom: 1.5px solid var(--bege-escuro);
+    border-left: none; border-right: none;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--texto);
+    background: var(--branco);
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .counter-val::-webkit-outer-spin-button,
+  .counter-val::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  /* ── RATING ── */
+  .rating-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .rating-opt { display: none; }
+  .rating-opt + label {
+    padding: 7px 16px;
+    border: 2px solid var(--bege-escuro);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cinza);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .rating-opt:checked + label {
+    border-color: var(--vermelho);
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  /* ── TOGGLE SIM/NÃO ── */
+  .toggle-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .toggle-opt { display: none; }
+  .toggle-opt + label {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border: 2px solid var(--bege-escuro);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cinza);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .toggle-opt:checked + label.opt-sim {
+    border-color: var(--verde);
+    background: var(--verde-claro);
+    color: var(--verde);
+  }
+  .toggle-opt:checked + label.opt-nao {
+    border-color: var(--vermelho);
+    background: #FFF0F0;
+    color: var(--vermelho);
+  }
+
+  /* ── CHIPS DE PRODUTOS ── */
+  .prod-chip-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .prod-chip { display: none; }
+  .prod-chip + label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--branco);
+    border: 2px solid var(--bege-escuro);
+    border-radius: 10px;
+    padding: 10px 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--cinza);
+    cursor: pointer;
+    transition: all 0.15s;
+    min-height: 42px;
+  }
+  .prod-chip:checked + label {
+    border-color: var(--vermelho);
+    background: #FFF0F0;
+    color: var(--vermelho);
+  }
+
+  /* ── CARD DE PRODUTO (detalhes) ── */
+  .prod-detail-card {
+    display: none;
+    background: var(--creme);
+    border: 1.5px solid var(--bege-escuro);
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 10px;
+  }
+  .prod-detail-card.open { display: block; }
+  .prod-detail-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--vermelho);
+    margin-bottom: 8px;
+  }
+  .prod-conc-block {
+    background: var(--branco);
+    border: 1px solid var(--bege-escuro);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .prod-conc-block .row-2 { margin-bottom: 8px; }
+  .prod-conc-block .row-2:last-child { margin-bottom: 0; }
+  .prod-conc-block .field { margin-bottom: 0; }
+  .prod-conc-block label { font-size: 10px; }
+  .prod-conc-remove {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--cinza);
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .btn-add-conc {
+    width: 100%;
+    background: var(--branco);
+    border: 1.5px dashed var(--bege-escuro);
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vermelho);
+    cursor: pointer;
+  }
+
+
+  /* ── RELACAO TOGGLE (3 opções) ── */
+  .rel-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .rel-opt { display: none; }
+  .rel-opt + label {
+    flex: 1;
+    text-align: center;
+    padding: 10px 4px;
+    border: 2px solid var(--bege-escuro);
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--cinza);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .rel-opt:checked + label {
+    border-color: var(--vermelho);
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  /* ── BOTÕES DE NAVEGAÇÃO ── */
+  .nav-btns {
+    display: flex;
+    gap: 10px;
+    padding: 16px;
+    position: sticky;
+    bottom: 0;
+    background: var(--bege);
+    border-top: 1px solid var(--bege-escuro);
+    z-index: 50;
+  }
+  .btn-back {
+    flex: 0 0 auto;
+    background: var(--cinza-claro);
+    color: var(--cinza);
+    border: none;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-next {
+    flex: 1;
+    background: var(--vermelho);
+    color: var(--branco);
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(155,28,28,0.3);
+    transition: background 0.2s;
+  }
+  .btn-next:active { background: var(--vermelho-claro); }
+
+  /* ── TELA FINAL ── */
+  .summary-box {
+    background: var(--branco);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1.5px solid var(--bege-escuro);
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 360px;
+    overflow-y: auto;
+    color: var(--texto);
+  }
+  .btn-whatsapp {
+    width: 100%;
+    background: #25D366;
+    color: var(--branco);
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 16px rgba(37,211,102,0.35);
+    margin-bottom: 10px;
+  }
+  .btn-copy {
+    width: 100%;
+    background: var(--cinza-claro);
+    color: var(--texto);
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  .btn-restart {
+    width: 100%;
+    background: none;
+    border: 2px solid var(--bege-escuro);
+    color: var(--cinza);
+    border-radius: 14px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .success-banner {
+    background: var(--verde-claro);
+    border: 1.5px solid #9AE6B4;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--verde);
+    font-weight: 600;
+  }
+
+  /* misc */
+  .tip {
+    font-size: 12px;
+    color: var(--cinza);
+    margin-top: 4px;
+    padding-left: 2px;
+  }
+  .divider { height: 1px; background: var(--bege-escuro); margin: 16px 0; }
+  .section-subtitle {
+    font-size: 12px;
+    color: var(--cinza);
+    margin-bottom: 12px;
+    margin-top: -10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo-icon">🧱</div>
+    <div class="header-titles">
+      <h1>Colaceramica</h1>
+      <p>Relatório Semanal de Vendas</p>
+    </div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progBar"></div>
+  </div>
+  <div class="progress-label" id="progLabel">Etapa 1 de 5</div>
+</header>
+
+<nav class="steps-nav" id="stepsNav">
+  <button class="step-btn active" onclick="goTo(0)">👤 Você</button>
+  <button class="step-btn" onclick="goTo(1)">📋 Visitas</button>
+  <button class="step-btn" onclick="goTo(2)">🗺️ Campo</button>
+  <button class="step-btn" onclick="goTo(3)">💬 Análise</button>
+  <button class="step-btn" onclick="goTo(4)">📲 Enviar</button>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     SEÇÃO 0 — IDENTIFICAÇÃO
+════════════════════════════════════════════ -->
+<div class="section active" id="sec0">
+  <div class="section-title">Quem é você esta semana?</div>
+
+  <div class="field">
+    <label>Seu nome</label>
+    <input type="text" id="nome" placeholder="Ex: João Silva" autocomplete="name">
+  </div>
+
+  <div class="row-2">
+    <div class="field">
+      <label>Data inicial</label>
+      <input type="date" id="data_inicial">
+    </div>
+    <div class="field">
+      <label>Data final</label>
+      <input type="date" id="data_final">
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SEÇÃO 1 — VISITAS
+════════════════════════════════════════════ -->
+<div class="section" id="sec1">
+  <div class="section-title">Quantas visitas você fez?</div>
+  <p class="section-subtitle">Use os botões +/− para contar cada tipo</p>
+
+  <div class="subsection-title">🔁 Clientes novos e antigos a recuperar visitados</div>
+
+  <div class="counter-row">
+    <div class="counter-label">🔨 Lojas de Material de Construção</div>
+    <div class="counter-controls">
+      <button class="counter-btn" onclick="change('cnt_loja_novo',-1)">−</button>
+      <input class="counter-val" type="number" id="cnt_loja_novo" value="0" min="0">
+      <button class="counter-btn" onclick="change('cnt_loja_novo',1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter-row">
+    <div class="counter-label">🏪 Depósitos de Material de Construção</div>
+    <div class="counter-controls">
+      <button class="counter-btn" onclick="change('cnt_dep_novo',-1)">−</button>
+      <input class="counter-val" type="number" id="cnt_dep_novo" value="0" min="0">
+      <button class="counter-btn" onclick="change('cnt_dep_novo',1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter-row">
+    <div class="counter-label">🏬 HomeCenters</div>
+    <div class="counter-controls">
+      <button class="counter-btn" onclick="change('cnt_hc_novo',-1)">−</button>
+      <input class="counter-val" type="number" id="cnt_hc_novo" value="0" min="0">
+      <button class="counter-btn" onclick="change('cnt_hc_novo',1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter-row">
+    <div class="counter-label">🏗️ Construtoras / Incorporadoras</div>
+    <div class="counter-controls">
+      <button class="counter-btn" onclick="change('cnt_con_novo',-1)">−</button>
+      <input class="counter-val" type="number" id="cnt_con_novo" value="0" min="0">
+      <button class="counter-btn" onclick="change('cnt_con_novo',1)">+</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="subsection-title">✅ Clientes atuais visitados</div>
+
+  <div class="counter-row">
+    <div class="counter-label">🔨 Lojas de Material de Construção</div>
+    <div class="counter-controls">
+      <button class="counter-btn" onclick="change('cnt_loja_antigo',-1)">−</button>
+      <input class="counter-val" type="number" id="cnt_loja_antigo" value="0" min="0">
+      <button class="counter-btn" onclick="change('cnt_loja_antigo',1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter-row">
+    <div class="counter-label">🏪 Depósitos de Material de Construção</div>
+    <div class="counter-controls">
+      <button class="counter-btn" onclick="change('cnt_dep_antigo',-1)">−</button>
+      <input class="counter-val" type="number" id="cnt_dep_antigo" value="0" min="0">
+      <button class="counter-btn" onclick="change('cnt_dep_antigo',1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter-row">
+    <div class="counter-label">🏬 HomeCenters</div>
+    <div class="counter-controls">
+      <button class="counter-btn" onclick="change('cnt_hc_antigo',-1)">−</button>
+      <input class="counter-val" type="number" id="cnt_hc_antigo" value="0" min="0">
+      <button class="counter-btn" onclick="change('cnt_hc_antigo',1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter-row">
+    <div class="counter-label">🏗️ Construtoras / Incorporadoras</div>
+    <div class="counter-controls">
+      <button class="counter-btn" onclick="change('cnt_con_antigo',-1)">−</button>
+      <input class="counter-val" type="number" id="cnt_con_antigo" value="0" min="0">
+      <button class="counter-btn" onclick="change('cnt_con_antigo',1)">+</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SEÇÃO 2 — CAMPO (clientes visitados)
+════════════════════════════════════════════ -->
+<div class="section" id="sec2">
+  <div class="section-title">O que aconteceu no campo?</div>
+  <p class="section-subtitle">Registre os clientes mais importantes visitados na semana</p>
+
+  <div id="visitCards"></div>
+  <button class="btn-add" onclick="addVisit()">+ Adicionar cliente visitado</button>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SEÇÃO 3 — ANÁLISE
+════════════════════════════════════════════ -->
+<div class="section" id="sec3">
+  <div class="section-title">Sua visão da semana</div>
+
+  <div class="field">
+    <label>Como foi a semana no geral?</label>
+    <div class="rating-row">
+      <input class="rating-opt" type="radio" name="semana_rating" id="r1" value="🔴 Ruim">
+      <label for="r1">🔴 Ruim</label>
+      <input class="rating-opt" type="radio" name="semana_rating" id="r2" value="🟡 Regular">
+      <label for="r2">🟡 Regular</label>
+      <input class="rating-opt" type="radio" name="semana_rating" id="r3" value="🟢 Boa">
+      <label for="r3">🟢 Boa</label>
+      <input class="rating-opt" type="radio" name="semana_rating" id="r4" value="⭐ Ótima">
+      <label for="r4">⭐ Ótima</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Principal conquista ou destaque</label>
+    <textarea id="conquista" placeholder="O que deu certo? Qual foi o melhor momento?"></textarea>
+  </div>
+
+  <div class="field">
+    <label>Maior dificuldade encontrada</label>
+    <textarea id="dificuldade" placeholder="Objeções de preço, falta de produto, concorrência, acesso ao decisor..."></textarea>
+  </div>
+
+  <div class="field">
+    <label>Concorrente que apareceu mais esta semana</label>
+    <input type="text" id="concorrente" placeholder="Nome do concorrente e produto">
+  </div>
+
+  <div class="field">
+    <label>Precisa de algum apoio do gestor?</label>
+    <textarea id="apoio" placeholder="Tabela de preços, visita conjunta, material de apoio, treinamento..." style="min-height:60px;"></textarea>
+  </div>
+
+  <div class="field">
+    <label>Prioridade nº 1 da próxima semana</label>
+    <input type="text" id="prox_prioridade" placeholder="Ex: Fechar proposta com Construtora XYZ">
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SEÇÃO 4 — RESUMO E ENVIO
+════════════════════════════════════════════ -->
+<div class="section" id="sec4">
+  <div class="section-title">Pronto para enviar! 🎉</div>
+
+  <div class="success-banner">
+    <span style="font-size:20px">✅</span>
+    <div>Relatório gerado com sucesso. Revise abaixo e clique em <strong>Enviar pelo WhatsApp</strong>.</div>
+  </div>
+
+  <div class="summary-box" id="summaryBox"></div>
+
+  <button class="btn-whatsapp" onclick="sendWhatsApp()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.821.487 3.53 1.338 5.006L2.005 22l5.086-1.333A9.945 9.945 0 0012 22c5.522 0 10-4.477 10-10S17.521 2 11.999 2zm.001 18a7.94 7.94 0 01-4.048-1.105l-.29-.172-3.018.791.806-2.942-.189-.302A7.96 7.96 0 014 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8z"/></svg>
+    Enviar pelo WhatsApp
+  </button>
+  <button class="btn-copy" onclick="copyText()">📋 Copiar texto</button>
+  <button class="btn-restart" onclick="restart()">↩ Preencher novo relatório</button>
+</div>
+
+<!-- ── NAVEGAÇÃO STICKY ── -->
+<div class="nav-btns" id="navBtns">
+  <button class="btn-back" id="btnBack" onclick="prev()" style="display:none">← Voltar</button>
+  <button class="btn-next" id="btnNext" onclick="next()">Próximo <span>→</span></button>
+</div>
+
+<script>
+let currentStep = 0;
+const TOTAL = 5;
+let visitCount = 0;
+
+const TIPO_OPTIONS = `
+  <option value="">Selecione...</option>
+  <option value="Loja de Material de Construção">🔨 Loja de Material de Construção</option>
+  <option value="Depósito de Material de Construção">🏪 Depósito de Material de Construção</option>
+  <option value="HomeCenter">🏬 HomeCenter</option>
+  <option value="Construtora / Incorporadora">🏗️ Construtora / Incorporadora</option>
+`;
+
+const PRODUTOS = ["ACII", "ACIII", "ACIII-E", "ACIII-E BR", "RB", "Gesso", "CBC", "Rejunte"];
+
+function goTo(n) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec' + n).classList.add('active');
+
+  const btns = document.querySelectorAll('.step-btn');
+  btns.forEach((b, i) => {
+    b.classList.remove('active');
+    if (i < n) b.classList.add('done');
+    else b.classList.remove('done');
+  });
+  btns[n].classList.add('active');
+
+  currentStep = n;
+  document.getElementById('btnBack').style.display = n > 0 ? 'block' : 'none';
+  document.getElementById('btnNext').textContent = n === TOTAL - 1 ? '✓ Gerar relatório' : 'Próximo →';
+  document.getElementById('navBtns').style.display = n === TOTAL - 1 ? 'none' : 'flex';
+
+  const pct = Math.round(((n + 1) / TOTAL) * 100);
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = `Etapa ${n + 1} de ${TOTAL}`;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (n === TOTAL - 1) buildSummary();
+}
+
+function next() {
+  if (currentStep < TOTAL - 1) goTo(currentStep + 1);
+}
+function prev() {
+  if (currentStep > 0) goTo(currentStep - 1);
+}
+
+function change(id, delta) {
+  const el = document.getElementById(id);
+  const val = Math.max(0, (parseInt(el.value) || 0) + delta);
+  el.value = val;
+}
+
+// ── CLIENTES VISITADOS (CAMPO) ──────────────────────────────────────────────
+function addVisit() {
+  visitCount++;
+  const id = visitCount;
+  const div = document.createElement('div');
+  div.className = 'visit-card';
+  div.id = 'vc' + id;
+
+  div.innerHTML = `
+    <div class="visit-card-header">
+      <div class="visit-num">${id}</div>
+      <div class="visit-card-title">Cliente visitado</div>
+      <button class="btn-remove" onclick="removeVisit(${id})" title="Remover">✕</button>
+    </div>
+    <div class="field">
+      <label>Empresa / Cliente</label>
+      <input type="text" id="v${id}_empresa" placeholder="Nome da empresa">
+    </div>
+    <div class="field">
+      <label>Tipo de relação com o cliente</label>
+      <div class="rel-row">
+        <input class="rel-opt" type="radio" name="v${id}_rel" id="v${id}_rel_novo" value="Novo" checked onchange="updateVisitMode(${id})">
+        <label for="v${id}_rel_novo">🆕 Novo</label>
+        <input class="rel-opt" type="radio" name="v${id}_rel" id="v${id}_rel_atual" value="Atual" onchange="updateVisitMode(${id})">
+        <label for="v${id}_rel_atual">✅ Atual</label>
+        <input class="rel-opt" type="radio" name="v${id}_rel" id="v${id}_rel_antigo" value="Antigo (recuperando)" onchange="updateVisitMode(${id})">
+        <label for="v${id}_rel_antigo">🔁 Antigo</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Tipo de cliente</label>
+      <select id="v${id}_tipo">${TIPO_OPTIONS}</select>
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>Cidade</label>
+        <input type="text" id="v${id}_cidade" placeholder="Cidade">
+      </div>
+      <div class="field">
+        <label>Bairro</label>
+        <input type="text" id="v${id}_bairro" placeholder="Bairro">
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>Nome do contato</label>
+        <input type="text" id="v${id}_contato" placeholder="Nome / cargo">
+      </div>
+      <div class="field">
+        <label>WhatsApp do contato</label>
+        <input type="tel" id="v${id}_whatsapp" placeholder="(85) 9...." inputmode="tel">
+      </div>
+    </div>
+
+    <!-- Bloco NOVO / ANTIGO: concorrentes (cada um com seus produtos) -->
+    <div id="v${id}_block_prospect">
+      <div class="field">
+        <label>Concorrentes presentes neste cliente</label>
+        <div id="v${id}_concs"></div>
+        <button type="button" class="btn-add-conc" onclick="addConcorrente(${id})">+ Adicionar concorrente</button>
+      </div>
+    </div>
+
+    <!-- Bloco ATUAL: feedback do cliente -->
+    <div id="v${id}_block_atual" style="display:none">
+      <div class="field">
+        <label>Pontos positivos comentados pelo cliente</label>
+        <textarea id="v${id}_pos" placeholder="O que o cliente elogiou sobre nossos produtos/serviço..."></textarea>
+      </div>
+      <div class="field">
+        <label>Pontos negativos comentados pelo cliente</label>
+        <textarea id="v${id}_neg" placeholder="Reclamações, problemas, sugestões de melhoria..."></textarea>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Resultado e próximo passo</label>
+      <select id="v${id}_status">
+        <option value="">Status...</option>
+        <option value="✅ Pedido confirmado">✅ Pedido confirmado</option>
+        <option value="📋 Orçamento entregue">📋 Orçamento entregue</option>
+        <option value="🔄 Retornar na próxima semana">🔄 Retornar semana que vem</option>
+        <option value="🔁 Aguardando decisão do cliente">🔁 Aguardando decisão</option>
+        <option value="❌ Não houve interesse">❌ Sem interesse</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Observação extra (opcional)</label>
+      <input type="text" id="v${id}_obs" placeholder="Qualquer detalhe relevante">
+    </div>
+  `;
+  document.getElementById('visitCards').appendChild(div);
+}
+
+function updateVisitMode(id) {
+  const rel = document.querySelector(`input[name="v${id}_rel"]:checked`);
+  const isAtual = rel && rel.value === 'Atual';
+  document.getElementById(`v${id}_block_prospect`).style.display = isAtual ? 'none' : 'block';
+  document.getElementById(`v${id}_block_atual`).style.display = isAtual ? 'block' : 'none';
+}
+
+// ── CONCORRENTES por cliente ─────────────────────────────────────────────────
+const concorrenteCounters = {}; // id (cliente) -> número de concorrentes cadastrados
+
+function buildConcorrenteBlock(id, cidx) {
+  const cid = `v${id}_c${cidx}`;
+
+  // chips de produtos, escopados a este concorrente
+  let prodChips = '';
+  PRODUTOS.forEach((p, pidx) => {
+    const pid = `${cid}_p${pidx}`;
+    prodChips += `
+      <div>
+        <input class="prod-chip" type="checkbox" id="${pid}_chk" onchange="toggleProdDetail('${pid}')">
+        <label for="${pid}_chk">${p}</label>
+      </div>`;
+  });
+
+  // cards de detalhe (escondidos até marcar o chip)
+  let prodDetails = '';
+  PRODUTOS.forEach((p, pidx) => {
+    const pid = `${cid}_p${pidx}`;
+    prodDetails += `
+      <div class="prod-detail-card" id="${pid}_detail">
+        <div class="prod-detail-title">${p}</div>
+        <div class="row-2">
+          <div class="field">
+            <label>Pedido mensal</label>
+            <input type="text" id="${pid}_pedmensal" placeholder="Ex: 3x/mês">
+          </div>
+          <div class="field">
+            <label>Volume/pedido (sc)</label>
+            <input type="text" id="${pid}_vol" placeholder="Sacos">
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>Preço</label>
+            <input type="text" id="${pid}_preco" placeholder="R$">
+          </div>
+          <div class="field">
+            <label>Obs.</label>
+            <input type="text" id="${pid}_obs" placeholder="Ex: cor do rejunte, etc.">
+          </div>
+        </div>
+      </div>`;
+  });
+
+  return `
+    <div class="prod-conc-block" id="${cid}_block">
+      ${cidx > 0 ? `<button type="button" class="prod-conc-remove" onclick="removeConcorrente(${id}, ${cidx})" title="Remover">✕</button>` : ''}
+      <div class="field">
+        <label>Nome do concorrente</label>
+        <input type="text" id="${cid}_nome" placeholder="Ex: Concorrente X">
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>Prazo de pagamento</label>
+          <input type="text" id="${cid}_prazo_pag" placeholder="Ex: 30/60 dias">
+        </div>
+        <div class="field">
+          <label>Prazo de entrega</label>
+          <input type="text" id="${cid}_prazo_ent" placeholder="Ex: 48h">
+        </div>
+      </div>
+      <div class="field">
+        <label>Emite Nota Fiscal?</label>
+        <div class="toggle-row">
+          <input class="toggle-opt" type="radio" name="${cid}_nf" id="${cid}_nf_sim" value="Sim">
+          <label class="opt-sim" for="${cid}_nf_sim">✅ Sim</label>
+          <input class="toggle-opt" type="radio" name="${cid}_nf" id="${cid}_nf_nao" value="Não">
+          <label class="opt-nao" for="${cid}_nf_nao">❌ Não</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Produtos Colaceramica que esse concorrente disputa</label>
+        <div class="prod-chip-grid">${prodChips}</div>
+        ${prodDetails}
+      </div>
+    </div>`;
+}
+
+function addConcorrente(id) {
+  const cidx = concorrenteCounters[id] || 0;
+  concorrenteCounters[id] = cidx + 1;
+  const container = document.getElementById(`v${id}_concs`);
+  container.insertAdjacentHTML('beforeend', buildConcorrenteBlock(id, cidx));
+}
+
+function removeConcorrente(id, cidx) {
+  const el = document.getElementById(`v${id}_c${cidx}_block`);
+  if (el) el.remove();
+}
+
+// ── PRODUTOS: abrir/fechar card de detalhe (escopado por concorrente) ───────
+function toggleProdDetail(pid) {
+  const chk = document.getElementById(`${pid}_chk`);
+  const detail = document.getElementById(`${pid}_detail`);
+  if (chk.checked) {
+    detail.classList.add('open');
+  } else {
+    detail.classList.remove('open');
+  }
+}
+
+function removeVisit(id) {
+  const el = document.getElementById('vc' + id);
+  if (el) el.remove();
+}
+
+// ── RESUMO ────────────────────────────────────────────────────────────────
+function formatDate(iso) {
+  if (!iso) return '—';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function buildSummary() {
+  const g = id => (document.getElementById(id) || {}).value || '';
+  const semanaRating = document.querySelector('input[name="semana_rating"]:checked');
+
+  const totalNovos =
+    parseInt(g('cnt_loja_novo')) + parseInt(g('cnt_dep_novo')) +
+    parseInt(g('cnt_hc_novo')) + parseInt(g('cnt_con_novo'));
+  const totalAntigos =
+    parseInt(g('cnt_loja_antigo')) + parseInt(g('cnt_dep_antigo')) +
+    parseInt(g('cnt_hc_antigo')) + parseInt(g('cnt_con_antigo'));
+  const totalVisits = totalNovos + totalAntigos;
+
+  // clientes visitados
+  let visitLines = '';
+  for (let i = 1; i <= visitCount; i++) {
+    const vc = document.getElementById('vc' + i);
+    if (!vc) continue;
+    const emp = g(`v${i}_empresa`);
+    if (!emp) continue;
+    const rel = document.querySelector(`input[name="v${i}_rel"]:checked`);
+    const relVal = rel ? rel.value : '';
+    const tipo = g(`v${i}_tipo`);
+    const cidade = g(`v${i}_cidade`);
+    const bairro = g(`v${i}_bairro`);
+    const contato = g(`v${i}_contato`);
+    const whatsapp = g(`v${i}_whatsapp`);
+    const status = g(`v${i}_status`);
+    const obs = g(`v${i}_obs`);
+
+    visitLines += `\n*${i}. ${emp}*`;
+    if (relVal) visitLines += ` (${relVal})`;
+    if (tipo) visitLines += ` — ${tipo}`;
+    let loc = [cidade, bairro].filter(Boolean).join(', ');
+    if (loc) visitLines += `\n   📍 ${loc}`;
+    if (contato) visitLines += `\n   👤 ${contato}`;
+    if (whatsapp) visitLines += `\n   📱 ${whatsapp}`;
+
+    if (relVal === 'Atual') {
+      const pos = g(`v${i}_pos`);
+      const neg = g(`v${i}_neg`);
+      if (pos) visitLines += `\n   👍 Pontos positivos: ${pos}`;
+      if (neg) visitLines += `\n   👎 Pontos negativos: ${neg}`;
+    } else {
+      // concorrentes cadastrados, cada um com seus produtos
+      const numConc = concorrenteCounters[i] || 0;
+      let concLines = '';
+      for (let cidx = 0; cidx < numConc; cidx++) {
+        const cid = `v${i}_c${cidx}`;
+        if (!document.getElementById(`${cid}_block`)) continue;
+        const nome = g(`${cid}_nome`);
+        if (!nome) continue;
+        const prazoPag = g(`${cid}_prazo_pag`);
+        const prazoEnt = g(`${cid}_prazo_ent`);
+        const nf = document.querySelector(`input[name="${cid}_nf"]:checked`);
+
+        concLines += `\n   🏳️ *${nome}*`;
+        const cdet = [];
+        if (prazoPag) cdet.push(`pgto: ${prazoPag}`);
+        if (prazoEnt) cdet.push(`entrega: ${prazoEnt}`);
+        if (nf) cdet.push(`NF: ${nf.value}`);
+        if (cdet.length) concLines += ` (${cdet.join(', ')})`;
+
+        // produtos disputados por este concorrente
+        PRODUTOS.forEach((p, pidx) => {
+          const pid = `${cid}_p${pidx}`;
+          const chk = document.getElementById(`${pid}_chk`);
+          if (chk && chk.checked) {
+            const pedmensal = g(`${pid}_pedmensal`);
+            const vol = g(`${pid}_vol`);
+            const preco = g(`${pid}_preco`);
+            const pobs = g(`${pid}_obs`);
+            const details = [];
+            if (pedmensal) details.push(`pedido mensal: ${pedmensal}`);
+            if (vol) details.push(`vol/pedido: ${vol} sc`);
+            if (preco) details.push(`preço: ${preco}`);
+            if (pobs) details.push(`obs: ${pobs}`);
+            concLines += `\n     ${p}`;
+            details.forEach(d => concLines += `\n       - ${d}`);
+          }
+        });
+      }
+      if (concLines) visitLines += `\n   🔍 Concorrência:${concLines}`;
+    }
+
+    if (status) visitLines += `\n   ${status}`;
+    if (obs) visitLines += `\n   📝 ${obs}`;
+    visitLines += '\n';
+  }
+
+  let txt = '';
+  txt += `🧱 *COLACERAMICA — RELATÓRIO SEMANAL*\n`;
+  txt += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  txt += `👤 *${g('nome') || 'Vendedor não informado'}*\n`;
+  txt += `📅 Período: ${formatDate(g('data_inicial'))} a ${formatDate(g('data_final'))}\n\n`;
+
+  txt += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  txt += `📊 *VISITAS DA SEMANA*\n`;
+
+  const novosItems = [
+    [g('cnt_loja_novo'), '🔨 Lojas de Material de Construção'],
+    [g('cnt_dep_novo'), '🏪 Depósitos de Material de Construção'],
+    [g('cnt_hc_novo'), '🏬 HomeCenters'],
+    [g('cnt_con_novo'), '🏗️ Construtoras'],
+  ].filter(([v]) => parseInt(v) > 0);
+  if (novosItems.length > 0) {
+    txt += `\n🔁 *Clientes novos e antigos a recuperar:*\n`;
+    novosItems.forEach(([v, label]) => txt += `${label}: ${v}\n`);
+    txt += `Subtotal: ${totalNovos}\n`;
+  }
+
+  const atuaisItems = [
+    [g('cnt_loja_antigo'), '🔨 Lojas de Material de Construção'],
+    [g('cnt_dep_antigo'), '🏪 Depósitos de Material de Construção'],
+    [g('cnt_hc_antigo'), '🏬 HomeCenters'],
+    [g('cnt_con_antigo'), '🏗️ Construtoras'],
+  ].filter(([v]) => parseInt(v) > 0);
+  if (atuaisItems.length > 0) {
+    txt += `\n✅ *Clientes atuais:*\n`;
+    atuaisItems.forEach(([v, label]) => txt += `${label}: ${v}\n`);
+    txt += `Subtotal: ${totalAntigos}\n`;
+  }
+
+  txt += `\n📌 *Total de visitas: ${totalVisits}*\n`;
+
+  if (visitLines) {
+    txt += `\n━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    txt += `🗺️ *CLIENTES VISITADOS*\n`;
+    txt += visitLines;
+  }
+
+  txt += `\n━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  txt += `💬 *ANÁLISE DA SEMANA*\n`;
+  if (semanaRating) txt += `Avaliação geral: ${semanaRating.value}\n`;
+  if (g('conquista')) txt += `\n🏅 Conquista:\n${g('conquista')}\n`;
+  if (g('dificuldade')) txt += `\n⚠️ Dificuldade:\n${g('dificuldade')}\n`;
+  if (g('concorrente')) txt += `\n🔍 Concorrência: ${g('concorrente')}\n`;
+  if (g('apoio')) txt += `\n🙋 Apoio necessário:\n${g('apoio')}\n`;
+  if (g('prox_prioridade')) txt += `\n🎯 Prioridade próx. semana:\n${g('prox_prioridade')}\n`;
+
+  txt += `\n━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  txt += `_Enviado via formulário Colaceramica_`;
+
+  document.getElementById('summaryBox').textContent = txt;
+  window._reportText = txt;
+}
+
+function sendWhatsApp() {
+  buildSummary();
+  const txt = window._reportText || '';
+  const url = `https://wa.me/?text=${encodeURIComponent(txt)}`;
+  window.open(url, '_blank');
+}
+
+function copyText() {
+  buildSummary();
+  const txt = window._reportText || '';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(() => alert('Texto copiado! Cole no WhatsApp.'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('Texto copiado!');
+  }
+}
+
+function restart() {
+  if (confirm('Limpar tudo e começar um novo relatório?')) {
+    document.querySelectorAll('input:not([type=radio]):not([type=checkbox])').forEach(e => e.value = '');
+    document.querySelectorAll('textarea').forEach(e => e.value = '');
+    document.querySelectorAll('select').forEach(e => e.value = '');
+    document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(e => e.checked = false);
+    document.querySelectorAll('.counter-val').forEach(e => e.value = 0);
+    document.getElementById('visitCards').innerHTML = '';
+    visitCount = 0;
+    for (const k in concorrenteCounters) delete concorrenteCounters[k];
+    addVisit();
+    goTo(0);
+  }
+}
+
+// Init
+addVisit();
+</script>
+</body>
+</html>
